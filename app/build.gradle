@@ -32,6 +32,8 @@ dependencies {
     //firebase
     implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.google.firebase:firebase-auth:16.1.0'
+    implementation 'com.google.firebase:firebase-ml-vision:19.0.2'
+    implementation 'com.google.firebase:firebase-storage:16.0.5'
 
     //google
     implementation 'com.google.gms:google-services:4.2.0'
