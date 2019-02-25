@@ -1,7 +1,9 @@
-package application.picturevoice;
+package application.picturevoice.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import application.picturevoice.R;
 
 public class MainActivity extends AppCompatActivity {
 

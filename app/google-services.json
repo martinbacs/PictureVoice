@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "794271436780",
+    "firebase_url": "https://picturevoice-27139.firebaseio.com",
+    "project_id": "picturevoice-27139",
+    "storage_bucket": "picturevoice-27139.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794271436780:android:2c56f413385b959d",
+        "android_client_info": {
+          "package_name": "application.picturevoice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "794271436780-velp4sgcvl00gajtqojsihem8fhhedjt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "application.picturevoice",
+            "certificate_hash": "563bf00e9e165ba578264fa389f27e291c53c98d"
+          }
+        },
+        {
+          "client_id": "794271436780-oodkdemn5hkfmi11efdrd817lmrcs9dt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARiTCx-0n40HsKensfKTWlnCrobsyQC0I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "794271436780-oodkdemn5hkfmi11efdrd817lmrcs9dt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
