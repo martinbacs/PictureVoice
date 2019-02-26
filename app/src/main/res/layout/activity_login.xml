@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:background="@color/colorbg"
+    android:background="@drawable/background"
     tools:context=".activities.LoginActivity">
 
     <!-- Login progress -->
@@ -29,10 +29,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="sans-serif-condensed-light"
+            android:fontFamily="sans-serif-thin"
             android:gravity="center"
             android:text="PictureVoice"
-            android:textColor="@android:color/white"
+            android:textColor="@color/black"
             android:textSize="36sp" />
 
         <TextView
@@ -40,10 +40,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="sans-serif-condensed-light"
+            android:fontFamily="sans-serif-thin"
             android:gravity="center"
             android:text="Sign in"
-            android:textColor="@android:color/white"
+            android:textColor="@color/black"
             android:textSize="24sp" />
 
         <ProgressBar
@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColorHint="@color/white"
@@ -89,9 +89,9 @@
                         android:textColorHint="@color/white"
                         android:textColorLink="@color/white" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColorHint="@color/white"
@@ -115,7 +115,7 @@
                         android:textColorHint="@color/white"
                         android:textColorLink="@color/white" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
                     android:id="@+id/email_sign_in_button"
@@ -146,4 +146,4 @@
 
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

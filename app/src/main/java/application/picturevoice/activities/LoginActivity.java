@@ -2,9 +2,9 @@ package application.picturevoice.activities;
 
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 
 import android.os.Bundle;
@@ -35,6 +35,7 @@ import application.picturevoice.R;
 
 public class LoginActivity extends AppCompatActivity {
 
+    //    <color name="colorbg">#27497f</color>
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     //firebase auth

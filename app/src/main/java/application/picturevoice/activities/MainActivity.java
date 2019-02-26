@@ -7,8 +7,10 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.speech.tts.TextToSpeech;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -50,16 +52,16 @@ public class MainActivity extends AppCompatActivity {
     //global variables
     private Context global;
     private String resultText;
+
     //init ui
-    private TextView tw;
+    private TextView textViewAudioToTextResult, textViewProfile;
     private Button btnPlay, btnSelect, btnUpload, btnConvertAudio, btnConvertText, btnDisplayText;
     private CheckBox checkBoxTxt, checkBoxMp3, checkBoxPic;
     private ImageView imageViewTxt, imageViewMp3, imageViewPic;
     private ImageView imageView;
     private Uri imageUri;
     private int imageLength;
-
-
+    
     //init firebase
     private FirebaseAuth mAuth;
     private StorageReference mStorageRef;
@@ -83,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
         //init storage reference
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
-        tw = findViewById(R.id.textView);
-        tw.setText(currentUser.getEmail());
+        textViewProfile = findViewById(R.id.twprofile);
+        textViewAudioToTextResult = findViewById(R.id.twresult);
 
         //init gui
         btnPlay = findViewById(R.id.btnplay);
@@ -121,6 +123,16 @@ public class MainActivity extends AppCompatActivity {
         imageViewPic.setAlpha(0.1f);
 
         FirebaseVisionText firebaseVisionText;
+
+        //set profile to current user
+        textViewProfile.setText(currentUser.getEmail());
+
+        textViewProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+            }
+        });
 
         //load tts
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -221,9 +233,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         //get result from picture to text conversion
-                        tw.setText("");
-                        tw.setFocusableInTouchMode(true);
-                        tw.requestFocus();
+                        textViewAudioToTextResult.setText("");
+                        textViewAudioToTextResult.setFocusableInTouchMode(true);
+                        textViewAudioToTextResult.requestFocus();
                         resultText = result.getResult().getText();
                         for (FirebaseVisionText.TextBlock block : result.getResult().getTextBlocks()) {
                             String blockText = block.getText();
@@ -234,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                             System.out.println("[blocktext]" + blockText);
 
                             //append textview with blockText result
-                            tw.append(blockText);
+                            textViewAudioToTextResult.append(blockText);
                             for (FirebaseVisionText.Line line : block.getLines()) {
                                 String lineText = line.getText();
                                 Float lineConfidence = line.getConfidence();
@@ -289,10 +301,12 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Document"), SELECT_DOCUMENT);
     }
 
+    //upload file to google cloud bucket
     public void uploadFile(Uri file) {
         //Uri file = Uri.fromFile(f);
         String fileName = getFileName(file);
         StorageReference riversRef = mStorageRef.child(mAuth.getUid() + "/" + fileName);
+
 
         riversRef.putFile(file)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

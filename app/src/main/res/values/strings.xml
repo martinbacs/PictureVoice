@@ -13,4 +13,27 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
     completions."
     </string>
+    <!-- Strings related to main activity -->
+    <string name="texttospeech">Text-To-Speech</string>
+    <string name="uploadpic">upload picture</string>
+    <string name="uploadtxt">upload text</string>
+    <string name="uploadaudio">upload audio</string>
+    <string name="selectpic">select picture</string>
+    <string name="newpic">new picture</string>
+    <string name="cnvtotext">convert to text</string>
+    <string name="cnvtoaudio">convert to audio</string>
+    <string name="displaytxt">display text</string>
+    <string name="playpause">play/stop</string>
+    <string name="upload">upload</string>
+    <string name="twtext">sample text</string>
+    <string name="pointone">1.</string>
+    <string name="pointtwo">2.</string>
+    <string name="pointthree">3.</string>
+    <string name="imgPic">image picture</string>
+    <string name="imgTxt">image text</string>
+    <string name="imgAudio">image audio</string>
+    <string name="imgSamplePic">image sample picture</string>
+    <string name="picturevoice">PictureVoice</string>
+    <string name="profiletext">profile</string>
+
 </resources>
