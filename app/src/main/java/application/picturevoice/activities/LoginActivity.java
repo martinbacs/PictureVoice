@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private ProgressBar mProgressBar;
-    private Button mEmailSignInButton;
+    private Button mEmailSignInButton, mSignUpButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
 
         //init gui
         mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+        mSignUpButton = findViewById(R.id.sign_up_button);
         mEmailView = findViewById(R.id.email);
         mProgressBar = findViewById(R.id.login_progress);
         mProgressBar.setVisibility(View.GONE);
@@ -81,6 +82,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        mSignUpButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
+            }
+        });
     }
 
 

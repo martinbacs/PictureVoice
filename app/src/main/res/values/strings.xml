@@ -35,5 +35,7 @@
     <string name="imgSamplePic">image sample picture</string>
     <string name="picturevoice">PictureVoice</string>
     <string name="profiletext">profile</string>
+    <!-- Strings related to main activity -->
+    <string name="register">Register</string>
 
 </resources>

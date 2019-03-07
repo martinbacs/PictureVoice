@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.Light.NoActionBar">
         <activity android:name=".activities.ProfileActivity"></activity>
+        <activity android:name=".activities.RegisterActivity"></activity>
         <activity android:name=".activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

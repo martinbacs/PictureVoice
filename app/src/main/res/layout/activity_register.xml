@@ -7,7 +7,7 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:background="@drawable/background"
-    tools:context=".activities.LoginActivity">
+    tools:context=".activities.RegisterActivity">
 
     <!-- Login progress -->
     <LinearLayout
@@ -42,7 +42,7 @@
             android:layout_gravity="center"
             android:fontFamily="sans-serif-thin"
             android:gravity="center"
-            android:text="Sign in"
+            android:text="@string/register"
             android:textColor="@color/black"
             android:textSize="24sp" />
 
@@ -117,20 +117,9 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
-                    android:id="@+id/email_sign_in_button"
-                    style="?android:textAppearanceSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/roundedbutton"
-                    android:text="sign in"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/sign_up_button"
+                    android:id="@+id/email_sign_in_button2"
                     style="?android:textAppearanceSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
