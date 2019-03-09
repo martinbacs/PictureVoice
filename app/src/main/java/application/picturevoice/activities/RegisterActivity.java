@@ -16,10 +16,16 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import application.picturevoice.R;
+import application.picturevoice.classes.User;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -27,6 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     //firebase auth
     private FirebaseAuth mAuth;
+    private FirebaseDatabase database;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -38,6 +45,8 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        database = FirebaseDatabase.getInstance();
 
         //init firebase
         FirebaseApp.initializeApp(this);
@@ -59,7 +68,8 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void createUser(){
+
+    private void createUser() {
         //show progress bar
         mProgressBar.setVisibility(View.VISIBLE);
 
@@ -72,9 +82,14 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            //write new user to database
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            DatabaseReference ref = database.getReference("Users/" + user.getUid());
+                            User u = new User(user.getUid(), user.getEmail());
+                            ref.setValue(u);
+
                             // sign in success, and start main activity
                             Log.d(TAG, "createUserWithEmail: success");
-                            FirebaseUser user = mAuth.getCurrentUser();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         } else {
                             // if sign in fails, display a message to the user

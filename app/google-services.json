@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "794271436780-e6ordb5t2mco5dubqh19lmirfsfitgfc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "application.picturevoice",
+            "certificate_hash": "72448ad9f01ac63fb09e846659a259c4829ca9e0"
+          }
+        },
+        {
           "client_id": "794271436780-oodkdemn5hkfmi11efdrd817lmrcs9dt.apps.googleusercontent.com",
           "client_type": 3
         }

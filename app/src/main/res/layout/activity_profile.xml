@@ -34,14 +34,36 @@
             android:textColor="@color/black"
             android:textSize="24sp" />
 
+        <EditText
+            android:id="@+id/editTextFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="file name" />
+
         <Button
-            android:id="@+id/btnRemove"
+            android:id="@+id/btnDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:background="@drawable/roundedbutton"
-            android:text="remove" />
+            android:text="Delete" />
 
+
+        <Button
+            android:id="@+id/btnDload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@drawable/roundedbutton"
+            android:text="dload" />
+
+        <TextView
+            android:id="@+id/textViewFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="some file" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"

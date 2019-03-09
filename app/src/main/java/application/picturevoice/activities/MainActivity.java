@@ -25,6 +25,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
@@ -34,12 +36,16 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.io.IOException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import application.picturevoice.R;
+import application.picturevoice.classes.CloudFile;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,10 +67,11 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageView;
     private Uri imageUri;
     private int imageLength;
-    
+
     //init firebase
     private FirebaseAuth mAuth;
     private StorageReference mStorageRef;
+    private FirebaseDatabase database;
 
     //init text-to-speech
     private TextToSpeech tts;
@@ -81,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         //check if user is logged in
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        database = FirebaseDatabase.getInstance();
 
         //init storage reference
         mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -273,9 +281,6 @@ public class MainActivity extends AppCompatActivity {
         btnConvertAudio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //@TODO GOOGLE API TEXT-TO-SPEECH SERVICE
-                // MyAsyncTask myAsyncTask = new MyAsyncTask();
-                // myAsyncTask.execute();
                 btnPlay.setEnabled(true);
                 checkBoxMp3.setEnabled(true);
                 imageViewMp3.setAlpha(1f);
@@ -302,20 +307,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //upload file to google cloud bucket
-    public void uploadFile(Uri file) {
-        //Uri file = Uri.fromFile(f);
-        String fileName = getFileName(file);
+    public void uploadFile(final Uri file) {
+        final String fileName = getFileName(file);
+
         StorageReference riversRef = mStorageRef.child(mAuth.getUid() + "/" + fileName);
 
+        //determine which type of file it is and upload it to proper folder?
+        //or just keep everything in "files" folder?
+        final DatabaseReference databaseReference = database.getReference("Users/" + mAuth.getUid() + "/files");
 
         riversRef.putFile(file)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        //get file size
+                        File f = new File(file.getPath());
+                        long size = f.length() / 1024;
+                        //firebase database
+
+                        CloudFile cloudFile = new CloudFile(fileName, String.valueOf(size));
+                        databaseReference.push().setValue(cloudFile);
+
+                        //cloud storage
                         // Get a URL to the uploaded content
                         Task<Uri> downloadUrl = taskSnapshot.getStorage().getDownloadUrl();
                         Log.i(TAG, "userid: " + mAuth.getUid());
                         Log.i(TAG, "uploaded file successfully, uri result: " + downloadUrl);
+
+                        Toast.makeText(getApplicationContext(), "uploaded file successfully", Toast.LENGTH_SHORT).show();
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -324,6 +344,8 @@ public class MainActivity extends AppCompatActivity {
                         // Handle unsuccessful uploads
                         // ...
                         Log.i(TAG, "uploaded file failed");
+                        Toast.makeText(getApplicationContext(), "failed to upload file, please try again.", Toast.LENGTH_SHORT).show();
+
                     }
                 });
     }
@@ -383,53 +405,4 @@ public class MainActivity extends AppCompatActivity {
             result = result.substring(cut + 1);
         return result;
     }
-
-//    public static class MyAsyncTask extends AsyncTask<Void,Void,Void> {
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//
-//            String text = "Hello World";
-//            // Instantiates a client
-//            System.out.println("init synt text");
-//            try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create()) {
-//                // Set the text input to be synthesized
-//                SynthesisInput input = SynthesisInput.newBuilder().setText(text).build();
-//
-//                System.out.println("input built");
-//                // Build the voice request
-//                VoiceSelectionParams voice =
-//                        VoiceSelectionParams.newBuilder()
-//                                .setLanguageCode("en-US") // languageCode = "en_us"
-//                                .setSsmlGender(SsmlVoiceGender.FEMALE) // ssmlVoiceGender = SsmlVoiceGender.FEMALE
-//                                .build();
-//
-//                System.out.println("voice built");
-//                // Select the type of audio file you want returned
-//                AudioConfig audioConfig =
-//                        AudioConfig.newBuilder()
-//                                .setAudioEncoding(AudioEncoding.MP3) // MP3 audio.
-//                                .build();
-//
-//                System.out.println("audio config built");
-//                // Perform the text-to-speech request
-//                SynthesizeSpeechResponse response =
-//                        textToSpeechClient.synthesizeSpeech(input, voice, audioConfig);
-//                System.out.println("response received");
-//                // Get the audio contents from the response
-//                ByteString audioContents = response.getAudioContent();
-//                System.out.println("audio content extracted");
-//                // Write the response to the output file.
-//                try (OutputStream out = new FileOutputStream("output.mp3")) {
-//                    out.write(audioContents.toByteArray());
-//                    System.out.println("Audio content written to file \"output.mp3\"");
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
-//            }catch (IOException e){
-//                e.printStackTrace();
-//            }
-//            return null;
-//        }
-//    }
 }
