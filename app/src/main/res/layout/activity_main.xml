@@ -203,53 +203,25 @@
 
                         <ImageView
                             android:id="@+id/imageViewPic"
-                            android:layout_width="5dp"
+                            android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:contentDescription="@string/imgPic"
                             app:srcCompat="@drawable/cam" />
 
                         <ImageView
                             android:id="@+id/imageViewTxt"
-                            android:layout_width="5dp"
+                            android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:layout_gravity="center"
                             android:contentDescription="@string/imgTxt"
                             app:srcCompat="@drawable/text" />
-
-                        <ImageView
-                            android:id="@+id/imageViewMp"
-                            android:layout_width="5dp"
-                            android:layout_height="50dp"
-                            android:contentDescription="@string/imgAudio"
-                            app:srcCompat="@drawable/mp" />
 
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center_horizontal">
-
-                        <CheckBox
-                            android:id="@+id/checkBoxPic"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/uploadpic" />
-
-                        <CheckBox
-                            android:id="@+id/checkBoxTxt"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/uploadtxt" />
-
-                        <CheckBox
-                            android:id="@+id/checkBoxMp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/uploadaudio" />
-
-                    </TableRow>
+                        android:gravity="center_horizontal"/>
 
                     <TableRow
                         android:layout_width="match_parent"
@@ -258,12 +230,22 @@
                         android:gravity="center_horizontal">
 
                         <Button
-                            android:id="@+id/btnupload"
+                            android:id="@+id/btnUploadImage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
                             android:background="@drawable/roundedbutton"
-                            android:text="@string/upload"
+                            android:text="upload image"
+                            tools:layout_editor_absoluteX="36dp"
+                            tools:layout_editor_absoluteY="654dp" />
+
+                        <Button
+                            android:id="@+id/btnUploadText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:background="@drawable/roundedbutton"
+                            android:text="upload text"
                             tools:layout_editor_absoluteX="36dp"
                             tools:layout_editor_absoluteY="654dp" />
 

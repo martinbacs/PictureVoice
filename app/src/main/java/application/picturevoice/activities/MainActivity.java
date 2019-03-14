@@ -61,9 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
     //init ui
     private TextView textViewAudioToTextResult, textViewProfile;
-    private Button btnPlay, btnSelect, btnUpload, btnConvertAudio, btnConvertText, btnDisplayText;
-    private CheckBox checkBoxTxt, checkBoxMp3, checkBoxPic;
-    private ImageView imageViewTxt, imageViewMp3, imageViewPic;
+    private Button btnPlay, btnSelect, btnUploadImage, btnUploadText, btnConvertAudio, btnConvertText, btnDisplayText;
+    private ImageView imageViewTxt, imageViewPic;
     private ImageView imageView;
     private Uri imageUri;
     private int imageLength;
@@ -99,34 +98,28 @@ public class MainActivity extends AppCompatActivity {
         //init gui
         btnPlay = findViewById(R.id.btnplay);
         btnSelect = findViewById(R.id.btnselect);
-        btnUpload = findViewById(R.id.btnupload);
+        btnUploadImage = findViewById(R.id.btnUploadImage);
+        btnUploadText = findViewById(R.id.btnUploadText);
         btnConvertAudio = findViewById(R.id.btnConvertAudio);
         btnConvertText = findViewById(R.id.btnConvertText);
         btnDisplayText = findViewById(R.id.btnDisplayText);
 
         imageViewPic = findViewById(R.id.imageViewPic);
         imageViewTxt = findViewById(R.id.imageViewTxt);
-        imageViewMp3 = findViewById(R.id.imageViewMp);
         imageView = findViewById(R.id.imageView);
 
-        checkBoxTxt = findViewById(R.id.checkBoxTxt);
-        checkBoxMp3 = findViewById(R.id.checkBoxMp);
-        checkBoxPic = findViewById(R.id.checkBoxPic);
 
         //disable gui that requires certain actions to be enabled
         btnConvertText.setEnabled(false);
         btnConvertAudio.setEnabled(false);
         btnPlay.setEnabled(false);
-        btnUpload.setEnabled(false);
+        btnUploadImage.setEnabled(false);
+        btnUploadText.setEnabled(false);
         btnDisplayText.setEnabled(false);
         imageViewTxt.setEnabled(false);
-        imageViewMp3.setEnabled(false);
-        checkBoxMp3.setEnabled(false);
-        checkBoxTxt.setEnabled(false);
-        checkBoxPic.setEnabled(false);
+
 
         //make images transparent to indicate that no file has been selected
-        imageViewMp3.setAlpha(0.1f);
         imageViewTxt.setAlpha(0.1f);
         imageViewPic.setAlpha(0.1f);
 
@@ -172,17 +165,12 @@ public class MainActivity extends AppCompatActivity {
                 btnConvertText.setEnabled(false);
                 btnConvertAudio.setEnabled(false);
                 btnPlay.setEnabled(false);
-                btnUpload.setEnabled(false);
+                btnUploadImage.setEnabled(false);
+                btnUploadText.setEnabled(false);
                 btnDisplayText.setEnabled(false);
 
                 imageViewTxt.setEnabled(false);
-                imageViewMp3.setEnabled(false);
 
-                checkBoxMp3.setEnabled(false);
-                checkBoxTxt.setEnabled(false);
-                checkBoxPic.setEnabled(false);
-
-                imageViewMp3.setAlpha(0.1f);
                 imageViewTxt.setAlpha(0.1f);
                 imageViewPic.setAlpha(0.1f);
                 SelectImageFromGallery();
@@ -190,13 +178,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnUpload.setOnClickListener(new View.OnClickListener() {
+        btnUploadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 uploadFile(imageUri);
             }
         });
 
+        btnUploadText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //convert string to text file
+                //upload file text file to cloud
+            }
+        });
 
         btnConvertText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,9 +214,8 @@ public class MainActivity extends AppCompatActivity {
                                         // Task completed successfully
                                         Toast.makeText(getApplicationContext(), "image to text conversion was successful", Toast.LENGTH_SHORT).show();
                                         btnConvertAudio.setEnabled(true);
-                                        btnUpload.setEnabled(true);
+                                        btnUploadText.setEnabled(true);
                                         btnDisplayText.setEnabled(true);
-                                        checkBoxTxt.setEnabled(true);
                                         imageViewTxt.setAlpha(1f);
 
                                     }
@@ -282,8 +276,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 btnPlay.setEnabled(true);
-                checkBoxMp3.setEnabled(true);
-                imageViewMp3.setAlpha(1f);
                 Toast.makeText(getApplicationContext(), "text-to-audio was successful", Toast.LENGTH_SHORT).show();
 
             }
@@ -359,12 +351,11 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     this.imageUri = imageReturnedIntent.getData();
                     this.imageView.setImageURI(this.imageUri);
-                    this.btnUpload.setEnabled(true);
+                    this.btnUploadImage.setEnabled(true);
                     this.imageViewTxt.setEnabled(true);
                     this.btnConvertText.setEnabled(true);
 
                     this.imageViewPic.setAlpha(1f);
-                    this.checkBoxPic.setEnabled(true);
                 }
 
             case SELECT_DOCUMENT:

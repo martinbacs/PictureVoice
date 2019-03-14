@@ -18,13 +18,22 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.MyViewHo
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         private TextView textViewFileName, textViewFileSize;
+        private View.OnClickListener onItemClickListener;
+
 
 
         public MyViewHolder(View v) {
             super(v);
             textViewFileName = v.findViewById(R.id.textViewFileName);
             textViewFileSize = v.findViewById(R.id.textViewFileSize);
+            v.setTag(this);
+            v.setOnClickListener(onItemClickListener);
         }
+
+        public void setItemClickListener(View.OnClickListener clickListener) {
+            onItemClickListener = clickListener;
+        }
+
     }
 
     //provide a suitable constructor (depends on the kind of dataset)

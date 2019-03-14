@@ -51,6 +51,22 @@ public class ProfileActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private CloudFile[] mDataset;
 
+    private View.OnClickListener onItemClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //TODO: Step 4 of 4: Finally call getTag() on the view.
+            // This viewHolder will have all required values.
+            RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) view.getTag();
+            int position = viewHolder.getAdapterPosition();
+            // viewHolder.getItemId();
+            // viewHolder.getItemViewType();
+            // viewHolder.itemView;
+            CloudFile cloudFile = mDataset[position];
+            Toast.makeText(ProfileActivity.this, "You Clicked: " + cloudFile.getFileName(), Toast.LENGTH_SHORT).show();
+            textViewFile.setText(cloudFile.getFileName());
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +88,10 @@ public class ProfileActivity extends AppCompatActivity {
         btnDeleteFile = findViewById(R.id.btnDelete);
         editTextFile = findViewById(R.id.editTextFile);
         textViewFile = findViewById(R.id.textViewFile);
+
+
+       // mRecyclerView.setonclick
+
 
 
         //get files from database
@@ -110,6 +130,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             }
         });
+
 
 
         btnDloadFile.setOnClickListener(new View.OnClickListener() {
@@ -167,5 +188,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+
+        mRecyclerView.setOnClickListener(onItemClickListener);
     }
 }
