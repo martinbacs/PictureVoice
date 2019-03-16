@@ -26,6 +26,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,23 +48,26 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private ProfileAdapter mAdapter;
+    private ProfileAdapter profileAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private CloudFile[] mDataset;
+    ArrayList<CloudFile> mDataset;
+
+    private int clickedPosition;
+
 
     private View.OnClickListener onItemClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            //TODO: Step 4 of 4: Finally call getTag() on the view.
             // This viewHolder will have all required values.
             RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) view.getTag();
             int position = viewHolder.getAdapterPosition();
-            // viewHolder.getItemId();
-            // viewHolder.getItemViewType();
-            // viewHolder.itemView;
-            CloudFile cloudFile = mDataset[position];
+            CloudFile cloudFile = mDataset.get(position);
             Toast.makeText(ProfileActivity.this, "You Clicked: " + cloudFile.getFileName(), Toast.LENGTH_SHORT).show();
-            textViewFile.setText(cloudFile.getFileName());
+            editTextFile.setText(cloudFile.getFileName());
+            clickedPosition = position;
+            btnDeleteFile.setEnabled(true);
+            btnDloadFile.setEnabled(true);
         }
     };
 
@@ -90,22 +94,20 @@ public class ProfileActivity extends AppCompatActivity {
         textViewFile = findViewById(R.id.textViewFile);
 
 
-       // mRecyclerView.setonclick
-
-
+        btnDloadFile.setEnabled(false);
+        btnDeleteFile.setEnabled(false);
 
         //get files from database
         mDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.e("Count ", "" + dataSnapshot.getChildrenCount());
-                mDataset = new CloudFile[Math.toIntExact(dataSnapshot.getChildrenCount())];
-                int i = 0;
+                mDataset = new ArrayList<CloudFile>();
 
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     CloudFile post = postSnapshot.getValue(CloudFile.class);
-                    mDataset[i] = post;
-                    i++;
+                    post.setFileId(postSnapshot.getKey());
+                    mDataset.add(post);
                     Log.e("filename: ", post.getFileName());
                     Log.e("size: ", post.getFileSize());
                 }
@@ -117,12 +119,14 @@ public class ProfileActivity extends AppCompatActivity {
                 // use a linear layout manager
                 mLayoutManager = new LinearLayoutManager(getApplicationContext());
                 mRecyclerView.setLayoutManager(mLayoutManager);
+                // mRecyclerView.setOnClickListener(onItemClickListener);
 
 
                 // specify an adapter (see also next example)
                 mAdapter = new ProfileAdapter(mDataset);
                 mRecyclerView.setAdapter(mAdapter);
 
+                mAdapter.setOnItemClickListener(onItemClickListener);
             }
 
             @Override
@@ -132,11 +136,10 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
 
-
         btnDloadFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StorageReference ref = mStorageRef.child(mAuth.getUid() + "/00NoEntryWhenRed-1.jpg");
+                StorageReference ref = mStorageRef.child(mAuth.getUid() + "/" + editTextFile.getText());
 
                 try {
                     final File localFile = File.createTempFile("images", "jpg");
@@ -145,15 +148,14 @@ public class ProfileActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                                     // Successfully downloaded data to local file
-                                    // ...
                                     textViewFile.setText(localFile.getName());
                                     Toast.makeText(getApplicationContext(), "file successfuly downloaded", Toast.LENGTH_SHORT).show();
+                                    btnDloadFile.setEnabled(false);
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
                             // Handle failed download
-                            // ...
                             Toast.makeText(ProfileActivity.this, "file download failed", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -176,19 +178,28 @@ public class ProfileActivity extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         // File deleted successfully
                         Toast.makeText(getApplicationContext(), fileName + " successfully deleted", Toast.LENGTH_SHORT).show();
-                        //TODO: remove deleted file from list and update ui
+                        //remove file from arraylist and notify adapter
+                        deleteFileAndUpdateUI(clickedPosition);
+                        btnDeleteFile.setEnabled(false);
+                        btnDloadFile.setEnabled(false);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        // Uh-oh, an error occurred!
                         Toast.makeText(getApplicationContext(), "failed to delete file", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         });
 
+    }
 
-        mRecyclerView.setOnClickListener(onItemClickListener);
+    public void deleteFileAndUpdateUI(int pos) {
+        Log.d(TAG, "deleting file with key: " + mDataset.get(clickedPosition).getFileId());
+        final DatabaseReference databaseReference = database.getReference("Users/" + mAuth.getUid() +
+                "/files/" + mDataset.get(clickedPosition).getFileId());
+        databaseReference.removeValue();
+        mDataset.remove(pos);
+        mAdapter.notifyItemChanged(pos);
     }
 }

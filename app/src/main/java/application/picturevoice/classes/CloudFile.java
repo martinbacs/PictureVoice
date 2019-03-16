@@ -30,4 +30,12 @@ public class CloudFile {
     public void setFileSize(String fileSize) {
         this.fileSize = fileSize;
     }
+
+    public void setFileId(String id){
+        this.fileId = id;
+    }
+
+    public String getFileId(){
+        return this.fileId;
+    }
 }

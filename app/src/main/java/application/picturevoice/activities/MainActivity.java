@@ -304,8 +304,7 @@ public class MainActivity extends AppCompatActivity {
 
         StorageReference riversRef = mStorageRef.child(mAuth.getUid() + "/" + fileName);
 
-        //determine which type of file it is and upload it to proper folder?
-        //or just keep everything in "files" folder?
+        //upload to database
         final DatabaseReference databaseReference = database.getReference("Users/" + mAuth.getUid() + "/files");
 
         riversRef.putFile(file)
