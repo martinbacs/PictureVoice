@@ -40,7 +40,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     private Button btnDloadFile, btnDeleteFile;
     private EditText editTextFile;
-    private TextView textViewFile;
 
     private FirebaseDatabase database;
     private DatabaseReference mDatabaseRef;
@@ -91,7 +90,6 @@ public class ProfileActivity extends AppCompatActivity {
         btnDloadFile = findViewById(R.id.btnDload);
         btnDeleteFile = findViewById(R.id.btnDelete);
         editTextFile = findViewById(R.id.editTextFile);
-        textViewFile = findViewById(R.id.textViewFile);
 
 
         btnDloadFile.setEnabled(false);
@@ -148,7 +146,6 @@ public class ProfileActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                                     // Successfully downloaded data to local file
-                                    textViewFile.setText(localFile.getName());
                                     Toast.makeText(getApplicationContext(), "file successfuly downloaded", Toast.LENGTH_SHORT).show();
                                     btnDloadFile.setEnabled(false);
                                 }

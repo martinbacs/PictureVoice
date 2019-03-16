@@ -7,6 +7,24 @@
     android:background="@drawable/background"
     tools:context=".activities.ProfileActivity">
 
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </TableLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -57,13 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:background="@drawable/roundedbutton"
-            android:text="dload" />
-
-        <TextView
-            android:id="@+id/textViewFile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="some file" />
+            android:text="download" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
