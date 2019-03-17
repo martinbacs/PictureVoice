@@ -37,12 +37,11 @@ import com.google.firebase.ml.vision.text.RecognizedLanguage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
@@ -204,6 +203,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //convert string to text file
                 //upload file text file to cloud
+                File file = writeToFile(getApplicationContext());
+
+                if (file != null) {
+
+                    Uri uri = Uri.fromFile(file);
+                    uploadFile(uri);
+
+                } else {
+                    Log.d(TAG, "File does not exist");
+                }
             }
         });
 
@@ -338,11 +347,11 @@ public class MainActivity extends AppCompatActivity {
                         //get file size
                         double fileSize = 0;
                         try {
-                            AssetFileDescriptor afd = getContentResolver().openAssetFileDescriptor(file,"r");
+                            AssetFileDescriptor afd = getContentResolver().openAssetFileDescriptor(file, "r");
                             fileSize = afd.getLength();
                             fileSize = fileSize / 1024;
                             afd.close();
-                        }catch (IOException e){
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
 
@@ -453,5 +462,38 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
+
+    private File writeToFile(Context context) {
+        try {
+            File path = context.getFilesDir();
+            File file = new File(path, "my-file-name.txt");
+
+            FileOutputStream stream = new FileOutputStream(file);
+            try {
+                stream.write(resultText.getBytes());
+            } finally {
+                stream.close();
+            }
+
+            int length = (int) file.length();
+
+            byte[] bytes = new byte[length];
+
+            FileInputStream in = new FileInputStream(file);
+            try {
+                in.read(bytes);
+            } finally {
+                in.close();
+            }
+
+            String contents = new String(bytes);
+            System.out.println("read from file: " + contents);
+
+            return file;
+        } catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+            return null;
+        }
+    }
 
 }
