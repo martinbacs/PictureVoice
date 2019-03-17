@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.Locale;
 
@@ -198,9 +199,17 @@ public class MainActivity extends AppCompatActivity {
         btnUploadText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //convert string to text file
-                //upload file text file to cloud
-                writeToFile(getApplicationContext());
+
+                File file = writeToFile(getApplicationContext());
+
+                if (file != null){
+
+                    Uri uri = Uri.fromFile(file);
+                    uploadFile(uri);
+
+                } else {
+                    System.out.println("FILE NOT EXIST");
+                }
             }
         });
 
@@ -333,7 +342,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         //get file size
                         File f = new File(file.getPath());
-                        long size = f.length() / 1024;
+                        double size = f.length() / 1024;
+                        System.out.println("SIZE: " + size);
                         //firebase database
 
                         CloudFile cloudFile = new CloudFile(fileName, String.valueOf(size));
@@ -441,7 +451,7 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    private void writeToFile(Context context) {
+    private File writeToFile(Context context) {
         try {
             File path = context.getFilesDir();
             File file = new File(path, "my-file-name.txt");
@@ -467,9 +477,11 @@ public class MainActivity extends AppCompatActivity {
             String contents = new String(bytes);
             System.out.println("read from file: "  + contents);
 
+            return file;
         }
         catch (IOException e) {
             Log.e("Exception", "File write failed: " + e.toString());
+            return null;
         }
     }
 
