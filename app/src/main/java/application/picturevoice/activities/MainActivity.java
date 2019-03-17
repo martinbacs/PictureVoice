@@ -3,9 +3,11 @@ package application.picturevoice.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
 
 import androidx.annotation.NonNull;
@@ -15,7 +17,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,14 +36,12 @@ import com.google.firebase.ml.vision.text.RecognizedLanguage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import application.picturevoice.R;
 import application.picturevoice.classes.CloudFile;
@@ -54,17 +53,20 @@ public class MainActivity extends AppCompatActivity {
     //OnActivityResult codes
     private static final int SELECT_IMAGE = 100;
     private static final int SELECT_DOCUMENT = 200;
+    private static final int REQUEST_IMAGE_CAPTURE = 300;
 
     //global variables
     private Context global;
     private String resultText;
+    private boolean isImageURI;
 
     //init ui
     private TextView textViewAudioToTextResult, textViewProfile;
-    private Button btnPlay, btnSelect, btnUploadImage, btnUploadText, btnConvertAudio, btnConvertText, btnDisplayText;
+    private Button btnPlay, btnSelect, btnNewImage, btnUploadImage, btnUploadText, btnConvertAudio, btnConvertText, btnDisplayText;
     private ImageView imageViewTxt, imageViewPic;
-    private ImageView imageView;
+    private ImageView imageViewResult;
     private Uri imageUri;
+    private Bitmap imageBitmap;
     private int imageLength;
 
     //init firebase
@@ -103,10 +105,11 @@ public class MainActivity extends AppCompatActivity {
         btnConvertAudio = findViewById(R.id.btnConvertAudio);
         btnConvertText = findViewById(R.id.btnConvertText);
         btnDisplayText = findViewById(R.id.btnDisplayText);
+        btnNewImage = findViewById(R.id.btnnew);
 
         imageViewPic = findViewById(R.id.imageViewPic);
         imageViewTxt = findViewById(R.id.imageViewTxt);
-        imageView = findViewById(R.id.imageView);
+        imageViewResult = findViewById(R.id.imageViewResult);
 
 
         //disable gui that requires certain actions to be enabled
@@ -185,11 +188,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btnNewImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dispatchCapturePictureIntent();
+            }
+        });
+
         btnUploadText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //convert string to text file
                 //upload file text file to cloud
+                writeToFile(getApplicationContext());
             }
         });
 
@@ -198,8 +209,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //start text recognition
                 FirebaseVisionImage vImage = null;
+
                 try {
-                    vImage = FirebaseVisionImage.fromFilePath(getApplicationContext(), imageUri);
+                    //maybe need to check when uploading file aswell?
+                    if (isImageURI) {
+                        vImage = FirebaseVisionImage.fromFilePath(getApplicationContext(), imageUri);
+
+                    } else {
+                        vImage = FirebaseVisionImage.fromBitmap(imageBitmap);
+                    }
+
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -348,19 +368,44 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case SELECT_IMAGE:
                 if (resultCode == RESULT_OK) {
+                    isImageURI = true;
                     this.imageUri = imageReturnedIntent.getData();
-                    this.imageView.setImageURI(this.imageUri);
+                    this.imageViewResult.setImageURI(this.imageUri);
                     this.btnUploadImage.setEnabled(true);
                     this.imageViewTxt.setEnabled(true);
                     this.btnConvertText.setEnabled(true);
-
                     this.imageViewPic.setAlpha(1f);
+                    break;
                 }
 
             case SELECT_DOCUMENT:
                 if (resultCode == RESULT_OK) {
                     Toast.makeText(getApplicationContext(), "doc: " + imageReturnedIntent.getData(), Toast.LENGTH_SHORT).show();
+                    break;
                 }
+
+            case REQUEST_IMAGE_CAPTURE:
+                if (resultCode == RESULT_OK) {
+                    isImageURI = false;
+                    Bundle extras = imageReturnedIntent.getExtras();
+                    //Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    this.imageBitmap = (Bitmap) extras.get("data");
+                    this.imageViewResult.setImageBitmap(this.imageBitmap);
+
+                    this.btnUploadImage.setEnabled(true);
+                    this.imageViewTxt.setEnabled(true);
+                    this.btnConvertText.setEnabled(true);
+                    this.imageViewPic.setAlpha(1f);
+                    break;
+
+                }
+        }
+    }
+
+    private void dispatchCapturePictureIntent() {
+        Intent capturePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (capturePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(capturePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
 
@@ -395,4 +440,37 @@ public class MainActivity extends AppCompatActivity {
             result = result.substring(cut + 1);
         return result;
     }
+
+    private void writeToFile(Context context) {
+        try {
+            File path = context.getFilesDir();
+            File file = new File(path, "my-file-name.txt");
+
+            FileOutputStream stream = new FileOutputStream(file);
+            try {
+                stream.write(resultText.getBytes());
+            } finally {
+                stream.close();
+            }
+
+            int length = (int) file.length();
+
+            byte[] bytes = new byte[length];
+
+            FileInputStream in = new FileInputStream(file);
+            try {
+                in.read(bytes);
+            } finally {
+                in.close();
+            }
+
+            String contents = new String(bytes);
+            System.out.println("read from file: "  + contents);
+
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
 }

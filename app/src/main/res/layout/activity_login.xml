@@ -75,7 +75,7 @@
                     app:boxBackgroundColor="@color/white"
                     app:boxStrokeColor="@color/white">
 
-                    <AutoCompleteTextView
+                    <EditText
                         android:id="@+id/email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

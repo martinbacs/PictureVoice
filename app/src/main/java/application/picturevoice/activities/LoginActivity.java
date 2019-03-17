@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
+    private EditText mEmailView;
     private EditText mPasswordView;
     private ProgressBar mProgressBar;
     private Button mEmailSignInButton, mSignUpButton;
@@ -62,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.login_progress);
         mProgressBar.setVisibility(View.GONE);
         mPasswordView = (EditText) findViewById(R.id.password);
+
 
         //init login form
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
