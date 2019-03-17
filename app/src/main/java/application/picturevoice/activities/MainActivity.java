@@ -2,6 +2,7 @@ package application.picturevoice.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -38,8 +39,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //FirebaseApp.initializeApp(this);
+
 
         global = getApplicationContext();
 
@@ -200,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //convert string to text file
                 //upload file text file to cloud
-                writeToFile(getApplicationContext());
             }
         });
 
@@ -327,16 +330,24 @@ public class MainActivity extends AppCompatActivity {
         //upload to database
         final DatabaseReference databaseReference = database.getReference("Users/" + mAuth.getUid() + "/files");
 
+
         riversRef.putFile(file)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         //get file size
-                        File f = new File(file.getPath());
-                        long size = f.length() / 1024;
-                        //firebase database
+                        double fileSize = 0;
+                        try {
+                            AssetFileDescriptor afd = getContentResolver().openAssetFileDescriptor(file,"r");
+                            fileSize = afd.getLength();
+                            fileSize = fileSize / 1024;
+                            afd.close();
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
 
-                        CloudFile cloudFile = new CloudFile(fileName, String.valueOf(size));
+                        //firebase database
+                        CloudFile cloudFile = new CloudFile(fileName, String.valueOf(fileSize));
                         databaseReference.push().setValue(cloudFile);
 
                         //cloud storage
@@ -370,6 +381,7 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     isImageURI = true;
                     this.imageUri = imageReturnedIntent.getData();
+
                     this.imageViewResult.setImageURI(this.imageUri);
                     this.btnUploadImage.setEnabled(true);
                     this.imageViewTxt.setEnabled(true);
@@ -441,36 +453,5 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    private void writeToFile(Context context) {
-        try {
-            File path = context.getFilesDir();
-            File file = new File(path, "my-file-name.txt");
-
-            FileOutputStream stream = new FileOutputStream(file);
-            try {
-                stream.write(resultText.getBytes());
-            } finally {
-                stream.close();
-            }
-
-            int length = (int) file.length();
-
-            byte[] bytes = new byte[length];
-
-            FileInputStream in = new FileInputStream(file);
-            try {
-                in.read(bytes);
-            } finally {
-                in.close();
-            }
-
-            String contents = new String(bytes);
-            System.out.println("read from file: "  + contents);
-
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
 
 }
