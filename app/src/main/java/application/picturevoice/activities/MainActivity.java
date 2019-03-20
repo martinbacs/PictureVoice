@@ -203,7 +203,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //convert string to text file
                 //upload file text file to cloud
-                File file = writeToFile(getApplicationContext());
+
+                String fileName = getFileName(imageUri);
+                fileName = setFileName(fileName);
+                File file = writeToFile(getApplicationContext(), fileName);
 
                 if (file != null) {
 
@@ -463,10 +466,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private File writeToFile(Context context) {
+    private File writeToFile(Context context, String filename) {
         try {
             File path = context.getFilesDir();
-            File file = new File(path, "my-file-name.txt");
+            File file = new File(path, filename);
 
             FileOutputStream stream = new FileOutputStream(file);
             try {
@@ -494,6 +497,14 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Exception", "File write failed: " + e.toString());
             return null;
         }
+    }
+
+    public String setFileName(String fileName) {
+        //fileName = fileName.replaceAll("\\s+", "");
+        if (fileName.contains(".png")) {
+            fileName = fileName.substring(0, fileName.length() -4);
+        }
+        return fileName + ".txt";
     }
 
 }
