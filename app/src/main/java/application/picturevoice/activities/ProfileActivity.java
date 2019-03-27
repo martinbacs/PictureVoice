@@ -166,11 +166,11 @@ public class ProfileActivity extends AppCompatActivity {
                 final String fileName = editTextFile.getText().toString();
                 StorageReference ref = mStorageRef.child(mAuth.getUid() + "/" + fileName);
 
-                // Delete the file
+                // delete the file
                 ref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // File deleted successfully
+                        // file deleted successfully
                         Toast.makeText(getApplicationContext(), fileName + " successfully deleted", Toast.LENGTH_SHORT).show();
                         //remove file from arraylist and notify adapter
                         deleteFileAndUpdateUI(clickedPosition);
@@ -194,6 +194,6 @@ public class ProfileActivity extends AppCompatActivity {
                 "/files/" + mDataset.get(clickedPosition).getFileId());
         databaseReference.removeValue();
         mDataset.remove(pos);
-        mAdapter.notifyItemChanged(pos);
+        mAdapter.notifyItemRemoved(pos);
     }
 }
