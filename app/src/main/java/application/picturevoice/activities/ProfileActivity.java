@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -58,7 +57,7 @@ public class ProfileActivity extends AppCompatActivity {
     private View.OnClickListener onItemClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            // This viewHolder will have all required values.
+            // viewHolder have all required values
             RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) view.getTag();
             int position = viewHolder.getAdapterPosition();
             CloudFile cloudFile = mDataset.get(position);
@@ -117,8 +116,6 @@ public class ProfileActivity extends AppCompatActivity {
                 // use a linear layout manager
                 mLayoutManager = new LinearLayoutManager(getApplicationContext());
                 mRecyclerView.setLayoutManager(mLayoutManager);
-                // mRecyclerView.setOnClickListener(onItemClickListener);
-
 
                 // specify an adapter (see also next example)
                 mAdapter = new ProfileAdapter(mDataset);
@@ -145,14 +142,14 @@ public class ProfileActivity extends AppCompatActivity {
                             .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                    // Successfully downloaded data to local file
+                                    // success
                                     Toast.makeText(getApplicationContext(), "file successfuly downloaded", Toast.LENGTH_SHORT).show();
                                     btnDloadFile.setEnabled(false);
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                            // Handle failed download
+                            // failed
                             Toast.makeText(ProfileActivity.this, "file download failed", Toast.LENGTH_SHORT).show();
                         }
                     });

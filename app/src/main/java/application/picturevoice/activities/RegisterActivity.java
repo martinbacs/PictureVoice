@@ -19,9 +19,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import application.picturevoice.R;
@@ -35,7 +32,7 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
 
-    // UI references.
+    // ui references
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private ProgressBar mProgressBar;
@@ -70,10 +67,10 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private void createUser() {
-        //show progress bar
+        // show progress bar
         mProgressBar.setVisibility(View.VISIBLE);
 
-        //login data
+        // user data
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
@@ -82,7 +79,7 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            //write new user to database
+                            // write new user to database
                             FirebaseUser user = mAuth.getCurrentUser();
                             DatabaseReference ref = database.getReference("Users/" + user.getUid());
                             User u = new User(user.getUid(), user.getEmail());

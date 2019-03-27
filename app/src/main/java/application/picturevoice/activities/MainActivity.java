@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
@@ -33,7 +31,6 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
-import com.google.firebase.ml.vision.text.RecognizedLanguage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -42,7 +39,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
 
 import application.picturevoice.R;
@@ -84,8 +80,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //FirebaseApp.initializeApp(this);
-
 
         global = getApplicationContext();
 
@@ -97,10 +91,10 @@ public class MainActivity extends AppCompatActivity {
         //init storage reference
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
+        //init gui
         textViewProfile = findViewById(R.id.twprofile);
         textViewAudioToTextResult = findViewById(R.id.twresult);
 
-        //init gui
         btnPlay = findViewById(R.id.btnplay);
         btnSelect = findViewById(R.id.btnselect);
         btnUploadImage = findViewById(R.id.btnUploadImage);
@@ -114,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         imageViewTxt = findViewById(R.id.imageViewTxt);
         imageViewResult = findViewById(R.id.imageViewResult);
 
-
         //disable gui that requires certain actions to be enabled
         btnConvertText.setEnabled(false);
         btnConvertAudio.setEnabled(false);
@@ -124,12 +117,9 @@ public class MainActivity extends AppCompatActivity {
         btnDisplayText.setEnabled(false);
         imageViewTxt.setEnabled(false);
 
-
         //make images transparent to indicate that no file has been selected
         imageViewTxt.setAlpha(0.1f);
         imageViewPic.setAlpha(0.1f);
-
-        FirebaseVisionText firebaseVisionText;
 
         //set profile to current user
         textViewProfile.setText(currentUser.getEmail());
@@ -152,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
 
         btnSelect.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,10 +168,10 @@ public class MainActivity extends AppCompatActivity {
                 imageViewTxt.setAlpha(0.1f);
                 imageViewPic.setAlpha(0.1f);
                 SelectImageFromGallery();
-
             }
         });
 
+        // upload image file
         btnUploadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -198,18 +186,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // upload text file
         btnUploadText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //convert string to text file
-                //upload file text file to cloud
-
                 String fileName = getFileName(imageUri);
                 fileName = setFileName(fileName);
                 File file = writeToFile(getApplicationContext(), fileName);
 
                 if (file != null) {
-
                     Uri uri = Uri.fromFile(file);
                     uploadFile(uri);
 
@@ -219,21 +204,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // start text recognition
         btnConvertText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //start text recognition
                 FirebaseVisionImage vImage = null;
 
                 try {
-                    //maybe need to check when uploading file aswell?
                     if (isImageURI) {
                         vImage = FirebaseVisionImage.fromFilePath(getApplicationContext(), imageUri);
 
                     } else {
                         vImage = FirebaseVisionImage.fromBitmap(imageBitmap);
                     }
-
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -243,10 +226,10 @@ public class MainActivity extends AppCompatActivity {
                         .getOnDeviceTextRecognizer();
                 final Task<FirebaseVisionText> result =
                         detector.processImage(vImage)
+                                // success
                                 .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
                                     @Override
                                     public void onSuccess(FirebaseVisionText firebaseVisionText) {
-                                        // Task completed successfully
                                         Toast.makeText(getApplicationContext(), "image to text conversion was successful", Toast.LENGTH_SHORT).show();
                                         btnConvertAudio.setEnabled(true);
                                         btnUploadText.setEnabled(true);
@@ -255,12 +238,11 @@ public class MainActivity extends AppCompatActivity {
 
                                     }
                                 })
+                                // failed
                                 .addOnFailureListener(
                                         new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                // Task failed with an exception
-                                                // ...
                                                 Toast.makeText(getApplicationContext(), "image to text conversion failed", Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -274,38 +256,19 @@ public class MainActivity extends AppCompatActivity {
                         textViewAudioToTextResult.setFocusableInTouchMode(true);
                         textViewAudioToTextResult.requestFocus();
                         resultText = result.getResult().getText();
+                        // get the block of text from picture
                         for (FirebaseVisionText.TextBlock block : result.getResult().getTextBlocks()) {
                             String blockText = block.getText();
-                            Float blockConfidence = block.getConfidence();
-                            List<RecognizedLanguage> blockLanguages = block.getRecognizedLanguages();
-                            Point[] blockCornerPoints = block.getCornerPoints();
-                            Rect blockFrame = block.getBoundingBox();
                             System.out.println("[blocktext]" + blockText);
 
                             //append textview with blockText result
                             textViewAudioToTextResult.append(blockText);
-                            for (FirebaseVisionText.Line line : block.getLines()) {
-                                String lineText = line.getText();
-                                Float lineConfidence = line.getConfidence();
-                                List<RecognizedLanguage> lineLanguages = line.getRecognizedLanguages();
-                                Point[] lineCornerPoints = line.getCornerPoints();
-                                Rect lineFrame = line.getBoundingBox();
-                                System.out.println("[linetext]" + lineText);
-                                for (FirebaseVisionText.Element element : line.getElements()) {
-                                    String elementText = element.getText();
-                                    Float elementConfidence = element.getConfidence();
-                                    List<RecognizedLanguage> elementLanguages = element.getRecognizedLanguages();
-                                    Point[] elementCornerPoints = element.getCornerPoints();
-                                    Rect elementFrame = element.getBoundingBox();
-                                }
-                            }
                         }
                     }
                 });
             }
 
         });
-
 
         btnConvertAudio.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -315,9 +278,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
     }
-
 
     private void SelectImageFromGallery() {
         Intent intent = new Intent();
@@ -333,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Document"), SELECT_DOCUMENT);
     }
 
-    //upload file to google cloud bucket
+    //upload file to bucket
     public void uploadFile(final Uri file) {
         final String fileName = getFileName(file);
 
@@ -358,12 +319,12 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                        //firebase database
+                        // firebase database
                         CloudFile cloudFile = new CloudFile(fileName, String.valueOf(fileSize));
                         databaseReference.push().setValue(cloudFile);
 
-                        //cloud storage
-                        // Get a URL to the uploaded content
+                        // cloud storage
+                        // get a URL to the uploaded content
                         Task<Uri> downloadUrl = taskSnapshot.getStorage().getDownloadUrl();
                         Log.i(TAG, "userid: " + mAuth.getUid());
                         Log.i(TAG, "uploaded file successfully, uri result: " + downloadUrl);
@@ -375,11 +336,9 @@ public class MainActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
-                        // ...
+                        // unsuccessful
                         Log.i(TAG, "uploaded file failed");
                         Toast.makeText(getApplicationContext(), "failed to upload file, please try again.", Toast.LENGTH_SHORT).show();
-
                     }
                 });
     }
@@ -412,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     isImageURI = false;
                     Bundle extras = imageReturnedIntent.getExtras();
-                    //Bitmap imageBitmap = (Bitmap) extras.get("data");
+
                     this.imageBitmap = (Bitmap) extras.get("data");
                     this.imageViewResult.setImageBitmap(this.imageBitmap);
 
@@ -433,6 +392,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // get the file name
     private String getFileName(Uri uri) {
         String result;
         //if uri is content
@@ -468,6 +428,7 @@ public class MainActivity extends AppCompatActivity {
 
     private File writeToFile(Context context, String filename) {
         try {
+            // create file and write result text to it
             File path = context.getFilesDir();
             File file = new File(path, filename);
 
@@ -499,8 +460,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // change file name, .txt for text file
     public String setFileName(String fileName) {
-        //fileName = fileName.replaceAll("\\s+", "");
         if (fileName.contains(".png")) {
             fileName = fileName.substring(0, fileName.length() -4);
         }
